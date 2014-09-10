@@ -25,7 +25,7 @@ public class EdgeComponent extends Component {
 	}
 
 	
-	public void setBestEdge(NodeEntity e, float dst){
+	public void setBestEdge(NodeEntity e){
 		bestEdge = e;
 	}
 	

@@ -39,7 +39,7 @@ public class NodeRendererSystem extends EntitySystem {
 
 	public void update(float deltaTime) {
 		
-		sr.setProjectionMatrix(AiGraphs.camera.combined);
+		sr.setProjectionMatrix(AIGraphs.camera.combined);
 		
 		updateMaps();
 

@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 
-import de.pxbox.aigraphs.EdgeComponent.Edge;
-
 public class PathEntity extends Entity {
 	
 	ComponentMapper<EdgeComponent> em;
+	ComponentMapper<PositionComponent> pm;
 
 	NodeEntity start;
 	NodeEntity end;
@@ -25,8 +24,7 @@ public class PathEntity extends Entity {
 	
 	public void move(NodeEntity nextNode){
 		path.add(nextNode);
-		EdgeComponent endEdgeComp = em.get(end);
-		lastLength = endEdgeComp.getLength(nextNode);
+		lastLength = pm.get(nextNode).xy.dst(pm.get(end).xy);
 		totalLength =+ lastLength;
 		end = nextNode;
 	}
@@ -34,7 +32,7 @@ public class PathEntity extends Entity {
 	public ArrayList<PathEntity> createSuccessors(){
 		ArrayList<PathEntity> successors = new ArrayList<PathEntity>();
 		
-		for(Edge edge : em.get(end).getEdges()){
+		for(NodeEntity edge : em.get(end).getEdges()){
 			PathEntity clone = null;
 			try {
 				clone = (PathEntity) this.clone();
@@ -43,7 +41,7 @@ public class PathEntity extends Entity {
 				e.printStackTrace();
 			}
 			
-			clone.move(edge.e);
+			clone.move(edge);
 		}
 		
 		return successors;
