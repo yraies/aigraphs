@@ -1,5 +1,7 @@
 package de.pxbox.aingraphs;
 
+import java.util.ArrayList;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.ApplicationAdapter;
@@ -7,13 +9,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 
+@SuppressWarnings("unused")
 public class AIGraphs extends ApplicationAdapter {
 	SpriteBatch batch;
 	static OrthographicCamera camera;
 //	Texture img;
 	Engine engine;
 	int[] indices;
+	NodeRenderer nr;
+	Graph graph;
+	AStarPathfinder astar;
 
 	@Override
 	public void create() {
@@ -23,38 +30,48 @@ public class AIGraphs extends ApplicationAdapter {
 //		img = new Texture("badlogic.jpg");
 		engine = new Engine();
 		
+		
 		debugInit();
 		
-		engine.addSystem(new NodeUpdaterSystem(engine));
-		engine.addSystem(new NodeRendererSystem(engine));
-		engine.addSystem(new AISystem(engine));
 		engine.update(0f);
 	}
 
 	private void debugInit() {
-		NodeEntity[] e = new NodeEntity[6];
-		e[0] = new NodeEntity(1, 1);
-		e[1] = new NodeEntity(1, 5);
-		e[2] = new NodeEntity(2, 4);
-		e[3] = new NodeEntity(4, 2);
-		e[4] = new NodeEntity(4, 5);
-		e[5] = new NodeEntity(5, 4);
 		
-		e[0].add(new EdgeComponent(e[1]));
-		e[1].add(new EdgeComponent(e[0],e[2]));
-		e[2].add(new EdgeComponent(e[3],e[4]));
-		e[3].add(new EdgeComponent(e[0],e[2],e[5]));
-		e[4].add(new EdgeComponent(e[1],e[5]));
-		e[5].add(new EdgeComponent(e[3],e[4]));
+		graph = new Graph();
 		
-		indices = new int[e.length];
-		for(int i = 0; i < indices.length; i++)
-			indices[i] = e[i].getIndex();
 		
-		for(Entity entity : e)
-			engine.addEntity(entity);
+		ArrayList<Node> n = new ArrayList<Node>(0);
+		n.add(new Node(0,new Vector3(1, 1,0)));
+		n.add(new Node(1,new Vector3(1, 5,0)));
+		n.add(new Node(2,new Vector3(2, 4,0)));
+		n.add(new Node(3,new Vector3(4, 2,0)));
+		n.add(new Node(4,new Vector3(4, 5,0)));
+		n.add(new Node(5,new Vector3(5, 4,0)));
+		
+		for(Node node : n)
+			graph.addNode(node);
+		
+		graph.addConnection(0, 1);//0->1
+		graph.addConnection(1, 0);//1->02
+		graph.addConnection(1, 2);
+		graph.addConnection(2, 3);//2->34
+		graph.addConnection(2, 4);
+		graph.addConnection(3, 0);//3->025
+		graph.addConnection(3, 2);
+		graph.addConnection(3, 5);
+		graph.addConnection(4, 1);//4->15
+		graph.addConnection(4, 5);
+		graph.addConnection(5, 3);//5->34
+		graph.addConnection(5, 4);
+		
+		nr = new NodeRenderer(graph);
+		
+		astar = new AStarPathfinder(0,4,graph);
 	}
 
+	int timer = 0;
+	
 	@Override
 	public void render() {
 		Gdx.gl.glClearColor(.1f, .1f, .1f, 1);
@@ -63,6 +80,23 @@ public class AIGraphs extends ApplicationAdapter {
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 		camera.position.set(camera.viewportWidth/2, camera.viewportHeight/2, 0);
 		batch.setProjectionMatrix(camera.combined);
+		
+		timer++;
+		if(timer>100){
+			astar.findStep();
+			timer=0;
+			if(astar.atTarget){
+				int rand1 = (int) Math.floor(Math.random()*5);
+				int rand2 = (int) Math.floor(Math.random()*5);
+				System.out.println("Searching for: " + rand1 + " -> " + rand2);
+				astar = new AStarPathfinder(rand1, rand2, graph);
+			}
+		}
+		if(timer%10 == 0){
+			System.out.println(timer);
+		}
+		
+		nr.draw();
 		
 		engine.update(Gdx.graphics.getDeltaTime());
 	}
