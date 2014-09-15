@@ -9,8 +9,8 @@ import de.pxbox.aingraphs.AIGraphs;
 public class DesktopLauncher {
 	public static void main(String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 900;
-		config.width = 900;
+		config.height = 600;
+		config.width = 800;
 		config.foregroundFPS = 30;
 //		config.backgroundFPS = -1;
 		config.initialBackgroundColor = new Color(0x222222);

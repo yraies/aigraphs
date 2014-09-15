@@ -6,10 +6,16 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+
+import de.pxbox.aingraphs.graph.AStarPathfinder;
+import de.pxbox.aingraphs.graph.Graph;
+import de.pxbox.aingraphs.graph.Node;
+import de.pxbox.aingraphs.graph.NodeRenderer;
 
 @SuppressWarnings("unused")
 public class AIGraphs extends ApplicationAdapter {
@@ -81,23 +87,30 @@ public class AIGraphs extends ApplicationAdapter {
 		camera.position.set(camera.viewportWidth/2, camera.viewportHeight/2, 0);
 		batch.setProjectionMatrix(camera.combined);
 		
+		
+		
+		
 		timer++;
 		if(timer>100){
 			astar.findStep();
 			timer=0;
-			if(astar.atTarget){
+			if(astar.isAtTarget()){
 				int rand1 = (int) Math.floor(Math.random()*5);
 				int rand2 = (int) Math.floor(Math.random()*5);
 				System.out.println("Searching for: " + rand1 + " -> " + rand2);
 				astar = new AStarPathfinder(rand1, rand2, graph);
 			}
 		}
-		if(timer%10 == 0){
-			System.out.println(timer);
+		if (timer % 20 == 0 && timer != 0 && timer != 100) {
+			System.out.println(timer + "%");
 		}
 		
 		nr.draw();
 		
 		engine.update(Gdx.graphics.getDeltaTime());
+	}
+	
+	public static Camera getCamera(){
+		return camera;
 	}
 }
