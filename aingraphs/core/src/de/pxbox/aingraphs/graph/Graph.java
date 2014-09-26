@@ -27,6 +27,21 @@ public class Graph {
 		return e;
 	}
 	
+	public void setNodeColor(Integer node,Color color){
+		nodes.get(node).setCol(color);
+	}
+	
+	public void setEdgeColor(Integer from, Integer to, Color color) {
+		Edge[] edgeArray = new Edge[edges.size()];
+		edges.get(from).toArray(edgeArray);
+		for(Edge edge : edgeArray){
+			if(edge.node2.ID == to){
+				edge.setColor(color);
+				break;
+			}
+		}
+	}
+	
 	public float getDistance(Integer node1, Integer node2){
 		return getPosition(node1).dst(getPosition(node2));
 	}
@@ -65,10 +80,6 @@ public class Graph {
 		ArrayList<Integer> nodeList = new ArrayList<Integer>(0);
 		nodeList.addAll(nodes.keySet());
 		return nodeList;
-	}
-	
-	public void setNodeColor(Integer node,Color color){
-		nodes.get(node).setCol(color);
 	}
 	
 	public void clearColors(){

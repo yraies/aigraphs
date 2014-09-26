@@ -1,6 +1,7 @@
 package de.pxbox.aingraphs.graph;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.Color;
@@ -38,9 +39,9 @@ public class AStarPathfinder {
 		
 		Integer x = null; 
 
-		for(Integer openNode : open)
-			System.out.print(graph.getPosition(openNode) + " - " );
-		System.out.println("");
+//		for(Integer openNode : open)
+//			System.out.print(graph.getPosition(openNode) + " - " );
+//		System.out.println("");
 		
 		// getting the best ( = lowest distance to target + lowest distance
 		// traveled ) open Node
@@ -72,8 +73,9 @@ public class AStarPathfinder {
 			//expand x
 			ArrayList<Integer> successors = graph.getExpansion(x);
 			for (Integer y : successors) {
-				
-				graph.setNodeColor(y,Color.YELLOW);
+
+				graph.setNodeColor(y, Color.YELLOW);
+				graph.setEdgeColor(x, y, Color.YELLOW);
 				
 				// check with other paths to y which is the best and set
 				// the best or if there is no path add it to open
@@ -105,9 +107,16 @@ public class AStarPathfinder {
 		} else {
 			System.out.println("AT TARGET");
 			ArrayList<Integer> path = createPath();
+			Collections.reverse(path);
+			graph.clearColors();
 			
-			for(Integer node : path)
-				graph.setNodeColor(node, Color.GREEN);
+			for(int i = 0; i < path.size()-1; i++){
+				graph.setNodeColor( path.get(i), Color.GREEN);
+				graph.setEdgeColor( path.get(i), path.get(i+1), Color.GREEN);
+			}
+			
+			graph.setNodeColor(path.get(path.size()-1), Color.GREEN);
+			
 		}
 	}
 	
@@ -159,10 +168,6 @@ public class AStarPathfinder {
 				path.add(activeNode);
 			}
 		}
-		
-		for(Integer node : path)
-			System.out.print(node + " ");
-		System.out.println(" ");
 		
 		return path;
 	}

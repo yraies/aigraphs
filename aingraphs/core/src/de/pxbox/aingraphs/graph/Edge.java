@@ -15,24 +15,28 @@ public class Edge {
 		node1 = null;
 		node2 = null;
 		modifier = 1f;
+		this.color = Color.WHITE;
 	}
 	
 	public Edge(float mod){
 		node1 = null;
 		node2 = null;
 		modifier = mod;
+		this.color = Color.WHITE;
 	}
 	
 	public Edge(Node from, Node to){
 		node1 = from;
 		node2 = to;
 		modifier = 1f;
+		this.color = Color.WHITE;
 	}
 	
 	public Edge(Node from, Node to, float mod){
 		node1 = from;
 		node2 = to;
 		modifier = mod;
+		this.color = Color.WHITE;
 	}
 	
 	
