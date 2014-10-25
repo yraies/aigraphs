@@ -99,7 +99,6 @@ public class GraphInteractor extends InputAdapter {
 			}
 		} 
 		if(mode == 1 ){
-			System.out.println("mode 1");
 			for (Integer node : nodes) {
 				ArrayList<Edge> edges = graph.getEdges(node);
 				for(Edge edge : edges){
@@ -107,13 +106,12 @@ public class GraphInteractor extends InputAdapter {
 					Vector3 v2 = graph.getNode(edge.getNode2().getID()).pos;
 					Vector2 p1 = new Vector2(v1.x, v1.y);
 					Vector2 p2 = new Vector2(v2.x, v2.y);
-					Vector2 path = p2.cpy().add(p1);
-					Vector2 offset = path.cpy().rotate90(1);
-					offset.scl(1 / offset.len() * 20);
+					Vector2 path = p2.cpy().sub(p1);
+					Vector2 offset = path.cpy().rotate(-90);
+					offset.nor().scl(20);
 
-					float[] vertices = { p1.x, p1.y, p2.x, p2.y,
-							p1.x - offset.x, p1.y - offset.y, p2.x - offset.x,
-							p2.y - offset.y };
+					float[] vertices = { p1.x, p1.y, p2.x, p2.y, p2.x - offset.x,
+							p2.y - offset.y, p1.x - offset.x, p1.y - offset.y };
 
 					StringBuilder sb = new StringBuilder();
 					
@@ -126,17 +124,15 @@ public class GraphInteractor extends InputAdapter {
 					sb.append((int) vertices[6] + "-");
 					sb.append((int) vertices[7]);
 					
-					System.out.println( sb.toString() + " # " + Gdx.input.getX() + " " + Gdx.input.getY() + " # " + screenX + " " + screenY);
-
 					Polygon poly = new Polygon(vertices);
 					if(poly.contains(screenX, Gdx.graphics.getHeight()-screenY)){
-						System.out.println("\n if \n" + sb.toString() + " # " + Gdx.input.getX() + " " + Gdx.input.getY() + " # " + screenX + " " + screenY);
-
-						selectedEdge1 = node;
-						selectedEdge2 = edges.indexOf(edge);
-						graph.setEdgeColor(node, edge.node2.getID(), Color.RED);
-						System.out.println("Edge:" + selectedEdge1 + " " + selectedEdge2);
+						System.out.println("found");
+						graph.setEdgeColor(edge.node1.getID(), edge.node2.getID(), Color.RED);
+						this.poly = poly;
 						return true;
+					}else{
+						System.out.println("nope");
+						this.poly = null;
 					}
 				}
 			}
@@ -146,46 +142,6 @@ public class GraphInteractor extends InputAdapter {
 	}
 
 	public boolean touchDragged (int screenX, int screenY, int pointer) {
-		ArrayList<Integer> nodes = graph.getAllNodes();
-		for (Integer node : nodes) {
-			ArrayList<Edge> edges = graph.getEdges(node);
-			for(Edge edge : edges){
-				Vector3 v1 = graph.getNode(edge.getNode1().getID()).pos;
-				Vector3 v2 = graph.getNode(edge.getNode2().getID()).pos;
-				Vector2 p1 = new Vector2(v1.x, v1.y);
-				Vector2 p2 = new Vector2(v2.x, v2.y);
-				Vector2 path = p2.cpy().add(p1);
-				Vector2 offset = path.cpy().rotate(100);
-				offset.nor();
-				offset.scl(20);
-				if(offset.angle()>180)
-					offset.scl(-1);
-
-				float[] vertices = { p1.x, p1.y, p2.x, p2.y, p2.x - offset.x,
-						p2.y - offset.y, p1.x - offset.x, p1.y - offset.y };
-
-				StringBuilder sb = new StringBuilder();
-				
-				sb.append((int) vertices[0] + "-");
-				sb.append((int) vertices[1] + "-");
-				sb.append((int) vertices[2] + "-");
-				sb.append((int) vertices[3] + "-");
-				sb.append((int) vertices[4] + "-");
-				sb.append((int) vertices[5] + "-");
-				sb.append((int) vertices[6] + "-");
-				sb.append((int) vertices[7]);
-				
-				Polygon poly = new Polygon(vertices);
-				if(poly.contains(screenX, Gdx.graphics.getHeight()-screenY)){
-					System.out.println("found");
-					this.poly = poly;
-					return true;
-				}else{
-					System.out.println("nope");
-					this.poly = null;
-				}
-			}
-		}
 		return false;
 	}
 
