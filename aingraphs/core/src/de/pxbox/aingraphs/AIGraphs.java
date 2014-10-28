@@ -35,6 +35,7 @@ import de.pxbox.aingraphs.graph.AStarPathfinder;
 import de.pxbox.aingraphs.graph.Graph;
 import de.pxbox.aingraphs.graph.GraphInteractor;
 import de.pxbox.aingraphs.graph.Node;
+import de.pxbox.aingraphs.graph.NodeIDGen;
 import de.pxbox.aingraphs.visual.CatmulRomSpline;
 import de.pxbox.aingraphs.visual.InformationPanel;
 import de.pxbox.aingraphs.visual.NodeRenderer;
@@ -44,7 +45,6 @@ public class AIGraphs extends ApplicationAdapter {
 	SpriteBatch batch;
 	static OrthographicCamera camera;
 //	Texture img;
-	Engine engine;
 	int[] indices;
 	NodeRenderer nr;
 	Graph graph;
@@ -66,12 +66,11 @@ public class AIGraphs extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 //		img = new Texture("badlogic.jpg");
-		engine = new Engine();
+		
+		NodeIDGen.init();
 		
 		debugInit();
 		initUI();
-		
-		engine.update(0f);
 	}
 	
 	private void initUI(){
@@ -98,6 +97,7 @@ public class AIGraphs extends ApplicationAdapter {
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
 				mode = 0;
+				interactor.setMode(mode);
 				label.setMode(mode);
 			}
 		});
@@ -106,6 +106,7 @@ public class AIGraphs extends ApplicationAdapter {
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
 				mode = 1;
+				interactor.setMode(mode);
 				label.setMode(mode);
 			}
 		});
@@ -114,6 +115,7 @@ public class AIGraphs extends ApplicationAdapter {
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
 				mode = 2;
+				interactor.setMode(mode);
 				label.setMode(mode);
 			}
 		});
@@ -135,12 +137,12 @@ public class AIGraphs extends ApplicationAdapter {
 		graph = new Graph();
 		
 		ArrayList<Node> n = new ArrayList<Node>(0);
-		n.add(new Node(0,new Vector3(1*80, 1*80,0)));
-		n.add(new Node(1,new Vector3(1*80, 5*80,0)));
-		n.add(new Node(2,new Vector3(2*80, 4*80,0)));
-		n.add(new Node(3,new Vector3(4*80, 2*80,0)));
-		n.add(new Node(4,new Vector3(4*80, 5*80,0)));
-		n.add(new Node(5,new Vector3(5*80, 4*80,0)));
+		n.add(new Node(new Vector3(1*80, 1*80,0)));
+		n.add(new Node(new Vector3(1*80, 5*80,0)));
+		n.add(new Node(new Vector3(2*80, 4*80,0)));
+		n.add(new Node(new Vector3(4*80, 2*80,0)));
+		n.add(new Node(new Vector3(4*80, 5*80,0)));
+		n.add(new Node(new Vector3(5*80, 4*80,0)));
 		
 		for(Node node : n)
 			graph.addNode(node);
@@ -201,7 +203,7 @@ public class AIGraphs extends ApplicationAdapter {
 //		
 //		spline.draw();
 		
-		timer++;
+/*		timer++;
 		if(timer>200){
 			astar.findStep();
 			timer=0;
@@ -215,21 +217,22 @@ public class AIGraphs extends ApplicationAdapter {
 //		if (timer % 20 == 0 && timer != 0 && timer != 100) {
 //			System.out.println(timer + "%");
 //		}
+*/		
+		
+		int[] pfnodes = interactor.getPathfindingNodes();
+		if(interactor.getPathfindingNodes() != null){
+			astar = new AStarPathfinder(pfnodes[0], pfnodes[1], graph);
+			astar.findInstant();
+		}
 		
 		nr.draw();
-		
-		engine.update(Gdx.graphics.getDeltaTime());
 		
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
 		
-		sr.begin(ShapeType.Line);
-		sr.line(0, 0, 400, 400);
-		if(interactor.poly != null){
-			sr.setColor(Color.CYAN);
-			sr.polygon(interactor.poly.getVertices());	
-		}
-		sr.end();
+//		sr.begin(ShapeType.Line);
+//		sr.line(0, 0, 400, 400);
+//		sr.end();
 	}
 	
 	ShapeRenderer sr;

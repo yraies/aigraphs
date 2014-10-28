@@ -22,7 +22,6 @@ public class InformationPanel extends Table{
 		labels.add(new Label("Laenge : ", skin));
 		labels.add(new Label("200 m", skin));
 		
-		
 		setMode(0);
 
 		for(int i = 0; i < labels.size();i+=2){

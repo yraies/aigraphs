@@ -21,21 +21,78 @@ public class Graph {
 		edges.put(newNode.getID(), new ArrayList<Edge>(0));
 	}
 	
-	public Edge addConnection(int i, int j){
-		Edge e = new Edge(getNode(i), getNode(j));
-		edges.get(i).add(e);
+	public Edge addConnection(Node node1, Node node2){
+		return addConnection(node1.getID(), node2.getID());
+	}
+	
+	public Edge addConnection(int nodeID1, int nodeID2){
+
+		boolean alreadyConnected = false;
+		ArrayList<Edge> currentEdges = getEdges(nodeID1);
+		for(Edge edge : currentEdges){
+			alreadyConnected = edge.node2.getID() == nodeID2;
+			if(alreadyConnected)
+				return edge;
+		}
+
+		Edge e = new Edge(getNode(nodeID1), getNode(nodeID2));
+		edges.get(nodeID1).add(e);
 		return e;
 	}
 	
-	public void setNodeColor(Integer node,Color color){
-		nodes.get(node).setCol(color);
+	public void deleteNode(Node node){
+		deleteNode(node.getID());
 	}
 	
-	public void setEdgeColor(Integer from, Integer to, Color color) {
+	public void deleteNode(int node){
+		nodes.remove(node);
+		edges.remove(node);
+
+		ArrayList<Integer> edgeKeys = new ArrayList<Integer>(edges.keySet());
+		
+		for(int i = 0; i < edges.size(); i++){
+			for(int j = 0; j < edges.get(edgeKeys.get(i)).size(); j++){
+				if(edges.get(edgeKeys.get(i)).get(j).node2.getID() == node)
+					edges.get(edgeKeys.get(i)).remove(j);
+			}
+		}
+		
+	}
+	
+	public void deleteConnection(Node node1, Node node2){
+		deleteConnection(node1.getID(), node2.getID());
+	}
+	
+	public void deleteConnection(Edge edge){
+		edges.get(edge.node1.getID()).remove(edge);
+	}
+	
+	public void deleteConnection(int nodeID1, int nodeID2){
+		for(int i = 0; i < edges.get(nodeID1).size(); i++){
+			if(edges.get(nodeID1).get(i).node2.getID() == nodeID2){
+				edges.get(nodeID1).remove(i);
+				break;
+			}
+		}
+	}
+	
+	public void setNodeColor(Node node,Color color){
+		setNodeColor(node.getID(), color);
+	}
+	
+	public void setNodeColor(int nodeID,Color color){
+		nodes.get(nodeID).setCol(color);
+	}
+	
+	public void setEdgeColor(Node from, Node to, Color color) {
+		setEdgeColor(from.getID(),to.getID(),color);
+	}
+	
+	public void setEdgeColor(int fromID, int toID, Color color) {
 		Edge[] edgeArray = new Edge[edges.size()];
-		edges.get(from).toArray(edgeArray);
+		edges.get(fromID).toArray(edgeArray);
 		for(Edge edge : edgeArray){
-			if(edge.node2.ID == to){
+			if(edge.node2.ID == toID){
 				edge.setColor(color);
 				break;
 			}

@@ -55,11 +55,9 @@ public class AStarPathfinder {
 			} else {
 				x = node;
 			}
-			
 		}
 		
 		
-
 		// checking if x is allready the target
 		setAtTarget(targetNode.equals(x));
 
@@ -68,6 +66,7 @@ public class AStarPathfinder {
 			open.remove(x);
 			closed.add(x);
 			
+			System.out.println("X: " + x);
 			graph.setNodeColor(x,Color.GREEN);
 			
 			//expand x

@@ -20,6 +20,16 @@ public class Node {
 		this.pos = null;
 		this.col = Color.WHITE;
 	}
+	public Node(Vector3 pos){
+		this.ID  = NodeIDGen.get();
+		this.pos = pos;
+		this.col = Color.WHITE;
+	}
+	public Node(Color col){
+		this.ID  = NodeIDGen.get();
+		this.pos = null;
+		this.col = col;
+	}
 	public Node(int id, Vector3 pos){
 		this.ID  = id;
 		this.pos = pos;
@@ -28,6 +38,11 @@ public class Node {
 	public Node(int id, Color col){
 		this.ID  = id;
 		this.pos = null;
+		this.col = col;
+	}
+	public Node(Vector3 pos, Color col){
+		this.ID  = NodeIDGen.get();
+		this.pos = pos;
 		this.col = col;
 	}
 	public Node(int id, Vector3 pos, Color col){
