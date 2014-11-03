@@ -17,7 +17,7 @@ public class DesktopLauncher {
 		config.samples = 8;
 		config.vSyncEnabled = true;
 		config.title = "Ai Graphs";
-		config.resizable = true;
+		config.resizable = false;
 		new LwjglApplication(new AIGraphs(), config);
 	}
 }

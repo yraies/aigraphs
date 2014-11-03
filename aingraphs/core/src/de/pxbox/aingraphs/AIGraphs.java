@@ -82,7 +82,7 @@ public class AIGraphs extends ApplicationAdapter {
 		InputMultiplexer mux = new InputMultiplexer(stage,interactor);
 		Gdx.input.setInputProcessor(mux);
 
-		label = new InformationPanel(skin);
+		label = new InformationPanel(skin,astar);
 		table.top();
 		table.add(label).width(200).padBottom(400);
 		table.row().top();
@@ -221,7 +221,7 @@ public class AIGraphs extends ApplicationAdapter {
 		
 		int[] pfnodes = interactor.getPathfindingNodes();
 		if(interactor.getPathfindingNodes() != null){
-			astar = new AStarPathfinder(pfnodes[0], pfnodes[1], graph);
+			astar.checkedResetTo(pfnodes[0], pfnodes[1]);
 			astar.findInstant();
 		}
 		

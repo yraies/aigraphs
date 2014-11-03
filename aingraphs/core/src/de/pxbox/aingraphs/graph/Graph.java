@@ -98,6 +98,10 @@ public class Graph {
 			}
 		}
 	}
+
+	public float getLength(Edge e){
+		return getDistance(e.node1.getID(),e.node2.getID());
+	}
 	
 	public float getDistance(Integer node1, Integer node2){
 		return getPosition(node1).dst(getPosition(node2));

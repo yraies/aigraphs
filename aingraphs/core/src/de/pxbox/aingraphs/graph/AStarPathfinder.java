@@ -15,11 +15,16 @@ public class AStarPathfinder {
 	ArrayList<Integer> open;
 	ArrayList<Integer> closed;
 	private boolean atTarget;
+	private boolean isSolvable;
+	
+	float pathlength;
 	
 	public AStarPathfinder(Integer start, Integer target,Graph graph){
 		startNode = start;
 		targetNode = target;
 		this.graph = graph;
+		pathlength = 0;
+		isSolvable = true;
 		open = new ArrayList<Integer>(0);
 		closed = new ArrayList<Integer>(0);
 		bestPredecessor = new HashMap<Integer, Integer>(0);
@@ -28,20 +33,30 @@ public class AStarPathfinder {
 	}
 	
 	public ArrayList<Integer> findInstant() {		
-		while (!isAtTarget()) {
+		while (!isAtTarget() && isSolvable()) {
 			findStep();
-		}		
-		return createPath();
+		}
+
+		if (isSolvable()) {
+			ArrayList<Integer> path = createPath();
+			pathlength = calculateBestLen(path.get(0));
+			return path;
+		} else {
+			pathlength = 0;
+			return null;
+		}
 	}
 
 	public void findStep() {
+		if(isAtTarget() || !isSolvable())
+			return;
+		
 		graph.clearColors();
 		
 		Integer x = null; 
 
 //		for(Integer openNode : open)
 //			System.out.print(graph.getPosition(openNode) + " - " );
-//		System.out.println("");
 		
 		// getting the best ( = lowest distance to target + lowest distance
 		// traveled ) open Node
@@ -57,16 +72,23 @@ public class AStarPathfinder {
 			}
 		}
 		
+		if(x == null){
+			setSolvable(false);
+			return;
+		}
+			
 		
 		// checking if x is allready the target
 		setAtTarget(targetNode.equals(x));
 
+		System.out.println(targetNode.equals(x));
+		
 		if (!isAtTarget()) {
 			//expanding preperations
 			open.remove(x);
 			closed.add(x);
 			
-			System.out.println("X: " + x);
+//			System.out.println("X: " + x);
 			graph.setNodeColor(x,Color.GREEN);
 			
 			//expand x
@@ -104,7 +126,7 @@ public class AStarPathfinder {
 			}
 			
 		} else {
-			System.out.println("AT TARGET");
+//			System.out.println("AT TARGET");
 			ArrayList<Integer> path = createPath();
 			Collections.reverse(path);
 			graph.clearColors();
@@ -133,7 +155,7 @@ public class AStarPathfinder {
 				activeNode = getBestPredecessor(activeNode);
 			}
 		}
-
+		
 		return length;
 	}
 	
@@ -174,9 +196,27 @@ public class AStarPathfinder {
 	public void reset(){
 		open = new ArrayList<Integer>(0);
 		closed = new ArrayList<Integer>(0);
+		pathlength = 0;
+		isSolvable = true;
 		bestPredecessor = new HashMap<Integer, Integer>(0);
 		setAtTarget(false);
 		open.add(startNode);
+	}
+	
+	public void checkedResetTo(Integer start, Integer target){
+		
+		if(this.startNode == start && this.targetNode == target)
+			return;
+		
+		startNode = start;
+		targetNode = target;
+		open = new ArrayList<Integer>(0);
+		closed = new ArrayList<Integer>(0);
+		bestPredecessor = new HashMap<Integer, Integer>(0);
+		setAtTarget(false);
+		open.add(startNode);
+		pathlength = 0;
+		isSolvable = true;
 	}
 
 	public boolean isAtTarget() {
@@ -185,5 +225,18 @@ public class AStarPathfinder {
 
 	private void setAtTarget(boolean atTarget) {
 		this.atTarget = atTarget;
+	}
+
+	public boolean isSolvable() {
+		return isSolvable;
+	}
+
+	private void setSolvable(boolean solvability) {
+		this.isSolvable = solvability;
+	}
+
+	public String getLength() {
+		System.out.println("getting Lenght " + isAtTarget() + " " + pathlength);
+		return Float.toString(Math.round(pathlength));
 	}
 }

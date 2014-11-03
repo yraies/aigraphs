@@ -7,20 +7,24 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
+import de.pxbox.aingraphs.graph.AStarPathfinder;
+
 public class InformationPanel extends Table{
 
 	int mode = -1;
 	ArrayList<Label> labels;
+	AStarPathfinder pf;
 	
 	
-	public InformationPanel(Skin skin) {
+	public InformationPanel(Skin skin,AStarPathfinder pf) {
 		labels = new ArrayList<Label>(0);
+		this.pf = pf;
 		labels.add(new Label("Modus : ", skin));
 		labels.add(new Label(getMode(), skin));
 		labels.add(new Label("Typ : ", skin));
-		labels.add(new Label("Breitensuche", skin));
+		labels.add(new Label("A*-Suche", skin));
 		labels.add(new Label("Laenge : ", skin));
-		labels.add(new Label("200 m", skin));
+		labels.add(new Label("0 m", skin));
 		
 		setMode(0);
 
@@ -40,6 +44,7 @@ public class InformationPanel extends Table{
 	
 	public void update(){
 		labels.get(1).setText(getMode());
+		labels.get(5).setText(pf.getLength() + " m");
 	}
 
 	public String getMode(){
